@@ -116,13 +116,15 @@ def build_mobilenet_v2(num_classes=len(DISEASE_CLASSES), pretrained=False):
 
 def get_default_model(model_path=None, device="cpu"):
     """
-    Loads or initializes the default Plant Disease Deep Learning model.
+    Loads or initializes the trained Plant Disease Deep Learning model.
+    Prioritizes models/mobilenetv2_plantvillage.
     """
-    model = PlantDiseaseCNN(num_classes=len(DISEASE_CLASSES))
-    
-    if model_path and os.path.exists(model_path):
-        state_dict = torch.load(model_path, map_location=device)
-        model.load_state_dict(state_dict)
+    from transformers import AutoModelForImageClassification
+    target = model_path if model_path and os.path.exists(model_path) else "models/mobilenetv2_plantvillage"
+    try:
+        model = AutoModelForImageClassification.from_pretrained(target)
+    except Exception:
+        model = AutoModelForImageClassification.from_pretrained("LourivalGontijo/plantvillage-mobilenetv2")
     
     model.to(device)
     model.eval()
@@ -131,24 +133,14 @@ def get_default_model(model_path=None, device="cpu"):
 
 def export_initial_weights(output_path="models/plant_disease_model.pth"):
     """
-    Initializes a reproducible model checkpoint and saves it to disk.
-    Ensures that the application is immediately operational out-of-the-box.
+    Ensures pre-trained high-accuracy weights are serialized to disk.
     """
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    torch.manual_seed(42)
-    model = PlantDiseaseCNN(num_classes=len(DISEASE_CLASSES))
-    
-    # Initialize weights with standard Kaiming normal
-    for m in model.modules():
-        if isinstance(m, nn.Conv2d):
-            nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
-        elif isinstance(m, (nn.BatchNorm2d, nn.BatchNorm1d)):
-            nn.init.constant_(m.weight, 1)
-            nn.init.constant_(m.bias, 0)
-        elif isinstance(m, nn.Linear):
-            nn.init.normal_(m.weight, 0, 0.01)
-            nn.init.constant_(m.bias, 0)
-            
+    from transformers import AutoModelForImageClassification
+    try:
+        model = AutoModelForImageClassification.from_pretrained("models/mobilenetv2_plantvillage")
+    except Exception:
+        model = AutoModelForImageClassification.from_pretrained("LourivalGontijo/plantvillage-mobilenetv2")
     torch.save(model.state_dict(), output_path)
     print(f"Exported model checkpoint successfully to {output_path}")
     return output_path
