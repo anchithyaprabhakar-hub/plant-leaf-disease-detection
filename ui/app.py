@@ -1,6 +1,6 @@
 """
 AgriVision AI - Streamlit Web Application
-Interactive Dashboard for Deep Learning Plant Leaf Disease Detection
+Streamlined Deep Learning Diagnostic Dashboard for Plant Leaf Disease Detection
 """
 
 import os
@@ -14,7 +14,6 @@ from detection.disease_classifier import (
     predict_leaf_disease,
     get_device
 )
-from detection.disease_info import DISEASE_CLASSES, DISEASE_INFO, get_disease_info
 
 
 # Page Configuration
@@ -28,7 +27,6 @@ st.set_page_config(
 # Root directory helper
 BASE_DIR = Path(__file__).resolve().parent.parent
 CSS_PATH = BASE_DIR / "ui" / "styles.css"
-SAMPLE_DIR = BASE_DIR / "assets" / "sample_leaves"
 
 
 def load_custom_css():
@@ -227,7 +225,7 @@ def run_app():
         st.markdown("### 📋 System Information")
         st.markdown(
             """
-            - **Model Architecture:** MobileNetV2 Transfer Learning
+            - **Model Architecture:** MobileNetV2 Deep CNN
             - **Input Resolution:** 224 × 224 RGB
             - **Trained Classes:** 38 Agricultural Foliar Classes
             - **Backend Engine:** PyTorch & OpenCV
@@ -240,14 +238,11 @@ def run_app():
     render_header()
 
     tabs = st.tabs([
-        "📤 Upload & Diagnose",
-        "📷 Live Camera Capture",
-        "🧪 Instant Test Samples",
-        "📚 Pathology Catalog",
-        "🧠 Neural Architecture"
+        "📤 Upload Leaf Photo",
+        "📷 Live Camera Capture"
     ])
 
-    # ---------------- TAB 1: UPLOAD & DIAGNOSE ----------------
+    # ---------------- TAB 1: UPLOAD LEAF PHOTO ----------------
     with tabs[0]:
         st.markdown("##### Upload a Leaf Photo for Immediate Analysis")
         uploaded_file = st.file_uploader(
@@ -310,145 +305,6 @@ def run_app():
                     confidence_threshold=confidence_threshold
                 )
                 display_diagnosis_report(result, image_pil)
-
-    # ---------------- TAB 3: INSTANT TEST SAMPLES ----------------
-    with tabs[2]:
-        st.markdown("##### 1-Click Verification using Authentic Botanical Leaf Specimens")
-        st.write("Select any botanical specimen below to test the deep learning pipeline instantly:")
-
-        samples_list = [
-            ("Tomato Early Blight", "tomato_early_blight.jpg", "Concentric target lesions on tomato"),
-            ("Tomato Late Blight", "tomato_late_blight.jpg", "Water-soaked foliar rot and mold"),
-            ("Tomato Healthy", "tomato_healthy.jpg", "Vibrant disease-free foliage"),
-            ("Potato Early Blight", "potato_early_blight.jpg", "Target lesions on solanum leaves"),
-            ("Potato Late Blight", "potato_late_blight.jpg", "Aggressive necrotic blight lesions"),
-            ("Corn Common Rust", "corn_common_rust.jpg", "Cinnamon-brown rust pustules"),
-            ("Apple Scab", "apple_scab.jpg", "Olive-brown velvety scab lesions"),
-            ("Potato Healthy", "potato_healthy.jpg", "Clean disease-free potato leaf")
-        ]
-
-        sample_name_to_file = {s[0]: s[1] for s in samples_list}
-
-        c_sel, c_btn = st.columns([3, 1])
-        with c_sel:
-            chosen_label = st.selectbox(
-                "Choose a reference specimen:",
-                options=[s[0] for s in samples_list],
-                index=0
-            )
-        with c_btn:
-            st.write("")
-            st.write("")
-            run_sample_btn = st.button("🔬 Diagnose Specimen", type="primary", use_container_width=True)
-
-        if run_sample_btn or ("active_sample" in st.session_state and st.session_state["active_sample"] == sample_name_to_file[chosen_label]):
-            target_file = SAMPLE_DIR / sample_name_to_file[chosen_label]
-            if target_file.exists():
-                st.markdown("---")
-                st.markdown(f"### 🔬 Detailed Analysis for `{chosen_label}`")
-                sample_img = Image.open(target_file)
-                result = predict_leaf_disease(
-                    sample_img,
-                    model_bundle,
-                    device=device,
-                    crop_filter=selected_crop_filter,
-                    confidence_threshold=confidence_threshold
-                )
-                display_diagnosis_report(result, sample_img)
-
-        st.markdown("---")
-        st.markdown("##### Visual Specimen Gallery")
-        cols = st.columns(4)
-        for i, (label, filename, desc) in enumerate(samples_list):
-            sample_path = SAMPLE_DIR / filename
-            col_target = cols[i % 4]
-            with col_target:
-                if sample_path.exists():
-                    img = Image.open(sample_path)
-                    st.image(img, caption=label, use_container_width=True)
-                    if st.button(f"Diagnose {label}", key=f"btn_sample_{i}", use_container_width=True):
-                        st.session_state["active_sample"] = filename
-                        st.rerun()
-
-    # ---------------- TAB 4: PATHOLOGY CATALOG ----------------
-    with tabs[3]:
-        st.markdown("##### Searchable Plant Pathology and Remedy Reference (38 Classes)")
-        search_query = st.text_input("🔍 Search by crop name, disease, or pathogen:", "")
-
-        filtered_classes = DISEASE_CLASSES
-        if search_query:
-            filtered_classes = [
-                c for c in DISEASE_CLASSES
-                if search_query.lower() in c.lower() or
-                   search_query.lower() in DISEASE_INFO.get(c, {}).get("disease_name", "").lower() or
-                   search_query.lower() in DISEASE_INFO.get(c, {}).get("crop", "").lower() or
-                   search_query.lower() in DISEASE_INFO.get(c, {}).get("pathogen", "").lower()
-            ]
-
-        st.caption(f"Showing {len(filtered_classes)} botanical disease entries")
-
-        for cls_name in filtered_classes:
-            info = get_disease_info(cls_name)
-            with st.expander(f"🌿 {info['crop']} — {info['disease_name']} ({info['severity']})"):
-                st.write(f"**Pathogen:** {info['pathogen']}")
-                st.write(f"**Description:** {info['description']}")
-                st.write("**Symptoms:**")
-                for s in info["symptoms"]:
-                    st.write(f"- {s}")
-                st.write("**Organic & Cultural Remedies:**")
-                for r in info["organic_remedies"]:
-                    st.write(f"- {r}")
-                st.write("**Chemical Control:**")
-                for c in info["chemical_control"]:
-                    st.write(f"- {c}")
-                st.write(f"**Prevention:** {info['prevention']}")
-
-    # ---------------- TAB 5: NEURAL ARCHITECTURE ----------------
-    with tabs[4]:
-        st.markdown("##### Deep Learning Architecture & Pipeline Inspection")
-        st.markdown(
-            """
-            AgriVision AI utilizes a high-efficiency MobileNetV2 deep convolutional neural network
-            fine-tuned on the standardized PlantVillage agricultural foliar disease benchmark.
-            """
-        )
-
-        col_arch1, col_arch2 = st.columns(2)
-        with col_arch1:
-            st.markdown(
-                """
-                <div class="glass-card">
-                    <h4>📐 Model Architecture Specifications</h4>
-                    <ul>
-                        <li><strong>Base Network:</strong> MobileNetV2 with Inverted Residual Bottlenecks</li>
-                        <li><strong>Input Resolution:</strong> 224 × 224 × 3 RGB</li>
-                        <li><strong>Classification Head:</strong> Dense Linear Layer with Dropout (0.2)</li>
-                        <li><strong>Total Output Classes:</strong> 38 Agricultural Plant Pathology Classes</li>
-                        <li><strong>Inference Acceleration:</strong> Apple Silicon MPS / CUDA / Multi-threading</li>
-                        <li><strong>Model Parameter Footprint:</strong> ~9.2 MB (Edge & Mobile Optimized)</li>
-                    </ul>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col_arch2:
-            st.markdown(
-                """
-                <div class="glass-card">
-                    <h4>🔬 Computer Vision Lesion Segmentation Pipeline</h4>
-                    <ul>
-                        <li><strong>Color Space Conversion:</strong> RGB to HSV and CIELAB color domains</li>
-                        <li><strong>Leaf Masking:</strong> Foliar hue thresholding isolating leaf from background</li>
-                        <li><strong>Lesion Masking:</strong> Necrotic/chlorotic thresholding isolating spot damage</li>
-                        <li><strong>Morphological Cleaning:</strong> Elliptical kernel opening (5×5) removing noise</li>
-                        <li><strong>Contour Localization:</strong> OpenCV external boundary polygon extraction</li>
-                        <li><strong>Damage Quantification:</strong> Ratio of lesion pixels to total foliar leaf area</li>
-                    </ul>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
 
 if __name__ == "__main__":
