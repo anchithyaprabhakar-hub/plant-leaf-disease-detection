@@ -129,17 +129,17 @@ def display_diagnosis_report(result, image_pil):
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        st.image(image_pil, caption="1. Input Foliage Image", use_container_width=True)
+        st.image(image_pil, caption="1. Input Foliage Image", width="stretch")
     with c2:
-        st.image(result["annotated_image"], caption=f"2. OpenCV Lesion Detections ({result['lesion_percentage']}% foliar area)", use_container_width=True)
+        st.image(result["annotated_image"], caption=f"2. OpenCV Lesion Detections ({result['lesion_percentage']}% foliar area)", width="stretch")
     with c3:
-        st.image(result["heatmap_image"], caption="3. Pathogen Saliency Heatmap", use_container_width=True)
+        st.image(result["heatmap_image"], caption="3. Pathogen Saliency Heatmap", width="stretch")
 
     # 3. Probabilistic Candidates Breakdown
     st.markdown("<div class='section-title'>📊 Candidate Predictions (Top-K Softmax)</div>", unsafe_allow_html=True)
     candidates_df = pd.DataFrame(result["candidates"])[["disease_name", "crop", "confidence", "severity"]]
     candidates_df.columns = ["Detected Condition", "Crop Host", "Confidence (%)", "Risk Level"]
-    st.dataframe(candidates_df, use_container_width=True, hide_index=True)
+    st.dataframe(candidates_df, width="stretch", hide_index=True)
 
     # Progress bar for top score
     st.progress(min(1.0, confidence / 100.0), text=f"Diagnostic Certainty: {confidence:.1f}%")
@@ -256,7 +256,7 @@ def run_app():
 
             c_preview, c_action = st.columns([1, 2])
             with c_preview:
-                st.image(image_pil, caption="Uploaded Leaf Preview", use_container_width=True)
+                st.image(image_pil, caption="Uploaded Leaf Preview", width="stretch")
 
             with c_action:
                 st.markdown(
@@ -275,7 +275,7 @@ def run_app():
                     """,
                     unsafe_allow_html=True
                 )
-                analyze_btn = st.button("🚀 Analyze Plant Leaf", type="primary", use_container_width=True)
+                analyze_btn = st.button("🚀 Analyze Plant Leaf", type="primary", width="stretch")
 
             if analyze_btn:
                 with st.spinner("Analyzing foliar patterns and computing disease probability..."):
