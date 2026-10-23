@@ -1,0 +1,178 @@
+/* 
+ * AgriVision AI - Modern Glassmorphic Agricultural Theme
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --primary-glow: rgba(16, 185, 129, 0.25);
+  --bg-dark: #0b1511;
+  --card-bg: rgba(18, 32, 26, 0.75);
+  --card-border: rgba(52, 211, 153, 0.18);
+  --text-main: #f3fbf7;
+  --text-muted: #94a3b8;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+}
+
+/* Global Container Tweaks */
+.main .block-container {
+  padding-top: 2rem !important;
+  padding-bottom: 3rem !important;
+  max-width: 1200px !important;
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+}
+
+/* Hero Banner */
+.hero-header {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 78, 59, 0.4) 100%);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  backdrop-filter: blur(16px);
+  border-radius: 18px;
+  padding: 2.2rem 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hero-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ecfdf5, #6ee7b7, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  color: #a7f3d0;
+  font-size: 1.05rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.status-badge {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Glassmorphism Cards */
+.glass-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(12px);
+  border-radius: 14px;
+  padding: 1.4rem;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(52, 211, 153, 0.4);
+}
+
+/* Diagnosis Header Badge */
+.diagnosis-badge {
+  display: inline-block;
+  padding: 0.45rem 1.1rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+}
+
+.badge-healthy {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid #10b981;
+  color: #34d399;
+}
+
+.badge-diseased {
+  background: rgba(244, 63, 94, 0.18);
+  border: 1px solid #f43f5e;
+  color: #fb7185;
+}
+
+/* Metadata pill tags */
+.meta-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  margin-right: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+/* Remedy sections */
+.remedy-box {
+  background: rgba(15, 23, 42, 0.5);
+  border-left: 4px solid var(--primary);
+  border-radius: 0 10px 10px 0;
+  padding: 1rem 1.2rem;
+  margin-top: 0.75rem;
+}
+
+.remedy-chemical {
+  border-left-color: var(--accent-amber);
+}
+
+/* Section headings */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Streamlit Tabs Customization */
+button[data-baseweb="tab"] {
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 1.2rem !important;
+  transition: all 0.2s ease !important;
+}
+
+/* File Uploader styling */
+div[data-testid="stFileUploader"] {
+  border-radius: 12px;
+  border: 2px dashed rgba(52, 211, 153, 0.3);
+  padding: 1rem;
+  background: rgba(16, 185, 129, 0.03);
+}
+
+div[data-testid="stFileUploader"]:hover {
+  border-color: #10b981;
+}
+
+/* Metric Highlights */
+.metric-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #34d399;
+}
